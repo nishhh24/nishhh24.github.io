@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nishita — Portfolio</title>
+<meta name="description" content="Nishita — front-end developer. Brutalist dark portfolio." />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+<style>
+  /* ============================================================
+     BRUTALIST DARK — Nishita
+     Crimson + Black. Hard edges, thick borders, offset shadows.
+     ============================================================ */
+
+  :root {
+    --accent-color: #DC143C;      /* crimson */
+    --accent-dark: #a30f2d;
+    --bg: #0a0a0a;                /* near black */
+    --bg-2: #121212;
+    --ink: #f2f2f2;               /* off white */
+    --ink-dim: #9a9a9a;
+    --line: #f2f2f2;
+    --shadow: 8px 8px 0 var(--accent-color);
+    --shadow-ink: 8px 8px 0 var(--ink);
+    --border: 3px solid var(--ink);
+  }
+
+  *,
+  *::before,
+  *::after { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Space Mono", ui-monospace, monospace;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    /* Brutalist faint grid backdrop */
+    background-image:
+      linear-gradient(rgba(242,242,242,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(242,242,242,0.035) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  /* ---- Custom cursor: kill the OS one everywhere ---- */
+  body,
+  a,
+  button,
+  .card,
+  [data-cursor] { cursor: none !important; }
+
+  /* ---- Text selection uses the accent ---- */
+  ::selection {
+    background: var(--accent-color);
+    color: #000000;
+  }
+  ::-moz-selection {
+    background: var(--accent-color);
+    color: #000000;
+  }
+
+  /* ============================================================
+     CUSTOM CURSOR
+     ============================================================ */
+  .cursor-dot,
+  .cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;   /* never blocks clicks */
+    z-index: 99999;         /* always on top */
+    transform: translate(-50%, -50%);
+    will-change: transform, width, height;
+  }
+
+  .cursor-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-color);
+    border-radius: 0;       /* brutalist = square */
+    z-index: 100000;
+  }
+
+  .cursor-ring {
+    width: 38px;
+    height: 38px;
+    border: 2px solid var(--ink);
+    border-radius: 0;
+    transition: width .22s ease, height .22s ease,
+                background-color .22s ease, border-color .22s ease,
+                opacity .22s ease;
+    mix-blend-mode: difference;
+  }
+
+  /* morph state on hover of interactive things */
+  .cursor-ring.is-active {
+    width: 70px;
+    height: 70px;
+    border-color: var(--accent-color);
+    background: rgba(220, 20, 60, 0.12);
+  }
+  .cursor-dot.is-hidden { opacity: 0; }
+
+  @media (hover: none), (pointer: coarse) {
+    .cursor-dot, .cursor-ring { display: none; }
+    body, a, button { cursor: auto !important; }
+  }
+
+  /* ============================================================
+     LAYOUT PRIMITIVES
+     ============================================================ */
+  .wrap {
+    width: min(1180px, 92vw);
+    margin-inline: auto;
+  }
+
+  section {
+    padding: clamp(4rem, 9vw, 8rem) 0;
+    border-bottom: var(--border);
+    position: relative;
+  }
+
+  .eyebrow {
+    font-size: 0.78rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    margin: 0 0 1rem;
+    display: inline-block;
+    border: 2px solid var(--accent-color);
+    padding: 0.25rem 0.7rem;
+  }
+
+  h1, h2, h3 {
+    font-family: "Archivo Black", sans-serif;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  a { color: var(--ink); text-decoration: none; }
+
+  /* ============================================================
+     HEADER / NAV
+     ============================================================ */
+  header.site {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    background: var(--bg);
+    border-bottom: var(--border);
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 0;
+  }
+  .brand {
+    font-family: "Archivo Black", sans-serif;
+    text-transform: uppercase;
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+  }
+  .brand span { color: var(--accent-color); }
+
+  .nav-links {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+  .nav-links a {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 0.4rem 0.7rem;
+    border: 2px solid transparent;
+    transition: border-color .18s ease, color .18s ease, background-color .18s ease;
+  }
+  .nav-links a:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+  }
+
+  .nav-cta {
+    border: 2px solid var(--ink) !important;
+    background: var(--ink);
+    color: #000 !important;
+    font-weight: 700;
+  }
+  .nav-cta:hover {
+    background: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+    color: #000 !important;
+  }
+
+  @media (max-width: 720px) {
+    .nav-links a:not(.nav-cta) { display: none; }
+  }
+
+  /* ============================================================
+     HERO
+     ============================================================ */
+  .hero { border-bottom: var(--border); padding-top: clamp(3rem, 8vw, 6rem); }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.35fr 0.9fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .hero-title {
+    font-size: clamp(2.8rem, 9vw, 7rem);
+    margin: 0.4rem 0 1.4rem;
+  }
+  .hero-title .line { display: block; overflow: hidden; }
+  .hero-title .line > span { display: inline-block; }
+  .hero-title .stroke {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--ink);
+    text-stroke: 2px var(--ink);
+  }
+  .hero-title .accent { color: var(--accent-color); }
+
+  .hero-bio {
+    max-width: 46ch;
+    color: var(--ink-dim);
+    font-size: 1.02rem;
+    margin-bottom: 2rem;
+  }
+  .hero-bio strong { color: var(--ink); }
+
+  .btn-row { display: flex; flex-wrap: wrap; gap: 1rem; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: "Space Mono", monospace;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.85rem;
+    padding: 0.85rem 1.4rem;
+    border: var(--border);
+    background: transparent;
+    color: var(--ink);
+    transition: transform .16s ease, box-shadow .16s ease,
+                background-color .16s ease, color .16s ease;
+  }
+  .btn:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 6px 6px 0 var(--accent-color);
+  }
+  .btn.primary {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #000;
+  }
+  .btn.primary:hover { box-shadow: 6px 6px 0 var(--ink); }
+
+  /* Hero portrait frame */
+  .portrait-frame {
+    position: relative;
+    border: var(--border);
+    background: var(--bg-2);
+    aspect-ratio: 1 / 1;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .portrait-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(100%) contrast(1.15);
+    transition: filter .35s ease, transform .5s ease;
+  }
+  .portrait-frame:hover img {
+    filter: grayscale(0%) contrast(1.05);
+    transform: scale(1.04);
+  }
+  .portrait-frame .tag {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: var(--accent-color);
+    color: #000;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.7rem;
+    border-top: 3px solid var(--ink);
+    border-right: 3px solid var(--ink);
+  }
+
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .portrait-frame { max-width: 340px; }
+  }
+
+  /* ============================================================
+     STATS BAR (GitHub)
+     ============================================================ */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: var(--border);
+  }
+  .stat {
+    padding: 1.6rem 1.2rem;
+    border-right: var(--border);
+    text-align: center;
+  }
+  .stat:last-child { border-right: none; }
+  .stat .num {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    color: var(--accent-color);
+    display: block;
+    line-height: 1;
+  }
+  .stat .lbl {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-top: 0.5rem;
+    display: block;
+  }
+  @media (max-width: 640px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stat:nth-child(2) { border-right: none; }
+    .stat:nth-child(1),
+    .stat:nth-child(2) { border-bottom: var(--border); }
+  }
+
+  /* ============================================================
+     PROJECTS
+     ============================================================ */
+  .section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  .section-head h2 { font-size: clamp(2rem, 6vw, 3.6rem); }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.8rem;
+    perspective: 1200px;
+  }
+
+  .card {
+    position: relative;
+    border: var(--border);
+    background: var(--bg-2);
+    padding: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 250px;
+    transform-style: preserve-3d;
+    transition: box-shadow .2s ease, border-color .2s ease;
+    box-shadow: 6px 6px 0 rgba(242,242,242,0.12);
+  }
+  .card:hover {
+    border-color: var(--accent-color);
+    box-shadow: 10px 10px 0 var(--accent-color);
+  }
+  .card .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    transform: translateZ(35px);
+  }
+  .card .repo-icon {
+    color: var(--accent-color);
+    font-size: 1.3rem;
+  }
+  .card .stars {
+    font-size: 0.8rem;
+    color: var(--ink-dim);
+    border: 2px solid var(--line);
+    padding: 0.15rem 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.7rem;
+    word-break: break-word;
+    transform: translateZ(28px);
+  }
+  .card p {
+    color: var(--ink-dim);
+    font-size: 0.9rem;
+    margin: 0 0 1.4rem;
+    flex-grow: 1;
+    transform: translateZ(18px);
+  }
+  .card .card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-top: 2px solid rgba(242,242,242,0.14);
+    padding-top: 0.9rem;
+    transform: translateZ(24px);
+  }
+  .lang {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+  .lang .dot {
+    width: 10px;
+    height: 10px;
+    background: var(--accent-color);
+    display: inline-block;
+  }
+  .card a.repo-link {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent-color);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .card a.repo-link:hover { text-decoration: underline; }
+
+  /* skeletons */
+  .card.skeleton {
+    justify-content: flex-start;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  .card.skeleton .bar {
+    height: 14px;
+    background: rgba(242,242,242,0.12);
+    margin-bottom: 0.9rem;
+  }
+  .card.skeleton .bar.w60 { width: 60%; }
+  .card.skeleton .bar.w90 { width: 90%; }
+  .card.skeleton .bar.w40 { width: 40%; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .55; } }
+
+  .notice {
+    border: var(--border);
+    border-left: 8px solid var(--accent-color);
+    padding: 1rem 1.2rem;
+    color: var(--ink-dim);
+    font-size: 0.9rem;
+    background: var(--bg-2);
+    grid-column: 1 / -1;
+  }
+
+  /* ============================================================
+     FOOTER
+     ============================================================ */
+  footer.site {
+    padding: clamp(3rem, 7vw, 5rem) 0 2.5rem;
+    background: var(--bg);
+  }
+  .foot-top {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 2rem;
+    align-items: end;
+    border-bottom: var(--border);
+    padding-bottom: 2.5rem;
+    margin-bottom: 1.6rem;
+  }
+  .foot-cta {
+    font-size: clamp(1.8rem, 6vw, 3.4rem);
+  }
+  .foot-cta a { color: var(--accent-color); }
+  .foot-cta a:hover { -webkit-text-stroke: 1px var(--accent-color); color: transparent; }
+
+  .socials {
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .socials a {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border: var(--border);
+    font-size: 1.15rem;
+    transition: transform .16s ease, background-color .16s ease, color .16s ease;
+  }
+  .socials a:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #000;
+    transform: translate(-3px, -3px);
+  }
+
+  .foot-bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.78rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .foot-bottom .accent { color: var(--accent-color); }
+
+  @media (max-width: 760px) {
+    .foot-top { grid-template-columns: 1fr; }
+    .socials { justify-content: flex-start; }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== CUSTOM CURSOR ===================== -->
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+<!-- ===================== HEADER ===================== -->
+<header class="site">
+  <div class="wrap nav">
+    <a href="#top" class="brand" data-cursor>NISHITA<span>.</span>DEV</a>
+    <nav class="nav-links">
+      <a href="#work" data-cursor>Work</a>
+      <a href="#about" data-cursor>About</a>
+      <a href="https://github.com/nishhh24" target="_blank" rel="noopener" class="nav-cta" data-cursor>
+        <i class="fa-brands fa-github"></i>&nbsp;GitHub
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow" id="heroEyebrow">Front-end Developer</span>
+        <h1 class="hero-title">
+          <span class="line"><span class="word">NISHITA</span></span>
+          <span class="line"><span class="word stroke">BUILDS</span></span>
+          <span class="line"><span class="word accent">THE WEB.</span></span>
+        </h1>
+        <p class="hero-bio" id="heroBio">
+          Hey, this is <strong>Nishita</strong> — nice to meet you. I design and build
+          interfaces with clean structure and a bit of attitude. I like hard edges,
+          honest layouts, and motion that means something.
+        </p>
+        <div class="btn-row">
+          <a href="#work" class="btn primary" data-cursor><i class="fa-solid fa-arrow-down"></i> See my work</a>
+          <a href="https://github.com/nishhh24" target="_blank" rel="noopener" class="btn" data-cursor>
+            <i class="fa-brands fa-github"></i> View GitHub
+          </a>
+        </div>
+      </div>
+
+      <div class="portrait-frame" id="portraitFrame">
+        <img id="profilePic"
+             src="https://avatars.githubusercontent.com/nishhh24"
+             alt="Nishita's GitHub avatar" loading="eager" />
+        <span class="tag" id="portraitTag">@nishhh24</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ABOUT + STATS ===================== -->
+  <section id="about">
+    <div class="wrap">
+      <span class="eyebrow">About</span>
+      <div class="section-head">
+        <h2>Straight to the point.</h2>
+      </div>
+      <p class="hero-bio" style="max-width:70ch; font-size:1.05rem;">
+        I'm a developer who cares about the details other people skip — the spacing,
+        the keyboard focus state, the way a button feels when you press it. My work
+        lives at the intersection of <strong>structure</strong> and <strong>motion</strong>.
+        Below is a live snapshot pulled straight from my GitHub.
+      </p>
+
+      <div class="stats" style="margin-top:2.5rem;">
+        <div class="stat"><span class="num" id="statRepos">—</span><span class="lbl">Repositories</span></div>
+        <div class="stat"><span class="num" id="statFollowers">—</span><span class="lbl">Followers</span></div>
+        <div class="stat"><span class="num" id="statFollowing">—</span><span class="lbl">Following</span></div>
+        <div class="stat"><span class="num" id="statStars">—</span><span class="lbl">Total Stars</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PROJECTS ===================== -->
+  <section id="work">
+    <div class="wrap">
+      <span class="eyebrow">Selected Work</span>
+      <div class="section-head">
+        <h2>Top repositories.</h2>
+        <p style="color:var(--ink-dim); max-width:40ch; font-size:0.9rem; margin:0;">
+          Pulled live from the GitHub API and sorted by stars. Hover a card to tilt it.
+        </p>
+      </div>
+
+      <div class="projects-grid" id="projectsGrid">
+        <!-- skeletons while loading -->
+        <div class="card skeleton">
+          <div class="bar w40"></div><div class="bar w90"></div><div class="bar w60"></div>
+        </div>
+        <div class="card skeleton">
+          <div class="bar w40"></div><div class="bar w90"></div><div class="bar w60"></div>
+        </div>
+        <div class="card skeleton">
+          <div class="bar w40"></div><div class="bar w90"></div><div class="bar w60"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-cta">
+        LET'S<br />BUILD<br /><a href="https://github.com/nishhh24" target="_blank" rel="noopener" data-cursor>SOMETHING.</a>
+      </div>
+      <div class="socials">
+        <!-- Primary social: GitHub. Add LinkedIn / X / email here by copying a block. -->
+        <a href="https://github.com/nishhh24" target="_blank" rel="noopener" aria-label="GitHub" data-cursor>
+          <i class="fa-brands fa-github"></i>
+        </a>
+        <!--
+          TO ADD MORE SOCIALS, uncomment and edit:
+          <a href="https://www.linkedin.com/in/YOUR-HANDLE" target="_blank" rel="noopener" aria-label="LinkedIn" data-cursor>
+            <i class="fa-brands fa-linkedin-in"></i>
+          </a>
+          <a href="mailto:you@example.com" aria-label="Email" data-cursor>
+            <i class="fa-solid fa-envelope"></i>
+          </a>
+        -->
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>&copy; <span id="year"></span> Nishita — All rights reserved</span>
+      <span>Built with <span class="accent">crimson</span> &amp; black</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===================== LIBRARIES ===================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script>
+/* ============================================================
+   1. CUSTOM CURSOR  (vanilla JS tracking + GSAP smoothing)
+   ============================================================ */
+(function initCursor() {
+  const dot  = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  if (!dot || !ring) return;
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  let ringX = mouseX, ringY = mouseY;
+
+  // Track raw pointer position via vanilla events
+  window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    // dot follows instantly
+    dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+  });
+
+  // Ring trails behind with a lerp loop
+  function render() {
+    ringX += (mouseX - ringX) * 0.18;
+    ringY += (mouseY - ringY) * 0.18;
+    ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+    requestAnimationFrame(render);
+  }
+  render();
+
+  // Morph on hover over anything clickable
+  const hoverables = document.querySelectorAll('a, button, [data-cursor], .card');
+  hoverables.forEach((el) => {
+    el.addEventListener('mouseenter', () => {
+      ring.classList.add('is-active');
+      dot.classList.add('is-hidden');
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.classList.remove('is-active');
+      dot.classList.remove('is-hidden');
+    });
+  });
+
+  window.addEventListener('mouseleave', () => { dot.style.opacity = '0'; ring.style.opacity = '0'; });
+  window.addEventListener('mouseenter', () => { dot.style.opacity = '1'; ring.style.opacity = '1'; });
+})();
+
+/* ============================================================
+   2. GITHUB API FETCH  (hardcoded username)
+   ============================================================ */
+const GITHUB_USERNAME = 'nishhh24';
+const API = 'https://api.github.com';
+
+async function loadGitHub() {
+  const grid = document.getElementById('projectsGrid');
+
+  try {
+    // Fetch profile + repos in parallel
+    const [userRes, reposRes] = await Promise.all([
+      fetch(`${API}/users/${GITHUB_USERNAME}`),
+      fetch(`${API}/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`)
+    ]);
+
+    if (!userRes.ok || !reposRes.ok) throw new Error('GitHub API responded ' + userRes.status + '/' + reposRes.status);
+
+    const user  = await userRes.json();
+    const repos = await reposRes.json();
+
+    /* ---- Profile bits ---- */
+    const pic = document.getElementById('profilePic');
+    if (user.avatar_url) pic.src = user.avatar_url;
+
+    const tag = document.getElementById('portraitTag');
+    if (tag) tag.textContent = '@' + (user.login || GITHUB_USERNAME);
+
+    // Optionally swap the bio if the user has one set on GitHub
+    // (kept subtle — our hand-written bio stays primary)
+    if (user.name) {
+      const brand = document.querySelector('.brand');
+      // leave brand as-is; name used only as fallback title
+    }
+
+    /* ---- Stats ---- */
+    const totalStars = repos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0);
+    countUp('statRepos', user.public_repos || repos.length);
+    countUp('statFollowers', user.followers || 0);
+    countUp('statFollowing', user.following || 0);
+    countUp('statStars', totalStars);
+
+    /* ---- Top repos sorted by stars ---- */
+    const top = repos
+      .filter((r) => !r.fork)
+      .sort((a, b) => b.stargazers_count - a.stargazers_count)
+      .slice(0, 6);
+
+    if (!top.length) {
+      grid.innerHTML = `<div class="notice">No public repositories found yet — check back soon.</div>`;
+      return;
+    }
+
+    grid.innerHTML = top.map((r) => `
+      <article class="card tilt">
+        <div class="card-top">
+          <i class="fa-solid fa-code-branch repo-icon"></i>
+          <span class="stars"><i class="fa-solid fa-star"></i> ${r.stargazers_count}</span>
+        </div>
+        <h3>${escapeHtml(r.name)}</h3>
+        <p>${r.description ? escapeHtml(r.description) : 'No description provided.'}</p>
+        <div class="card-foot">
+          <span class="lang"><span class="dot"></span>${r.language ? escapeHtml(r.language) : 'N/A'}</span>
+          <a class="repo-link" href="${r.html_url}" target="_blank" rel="noopener" data-cursor>
+            Code <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </article>
+    `).join('');
+
+    // Newly injected cards need cursor + tilt + scroll animation wired up
+    attachCursorTo(grid.querySelectorAll('a, .card'));
+    attachTilt(grid.querySelectorAll('.tilt'));
+    animateCardsIn(grid.querySelectorAll('.card'));
+
+  } catch (err) {
+    console.error('GitHub fetch failed:', err);
+    grid.innerHTML = `
+      <div class="notice">
+        <strong>Couldn't load live GitHub data right now.</strong><br />
+        The API may be rate-limited. My code is still on
+        <a href="https://github.com/${GITHUB_USERNAME}" target="_blank" rel="noopener" style="color:var(--accent-color); text-decoration:underline;">github.com/${GITHUB_USERNAME}</a>.
+      </div>`;
+  }
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+function countUp(id, target) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (!window.gsap) { el.textContent = target; return; }
+  const obj = { v: 0 };
+  gsap.to(obj, {
+    v: target,
+    duration: 1.4,
+    ease: 'power2.out',
+    onUpdate: () => { el.textContent = Math.round(obj.v); }
+  });
+}
+
+/* ============================================================
+   3. 3D HOVER TILT  (vanilla mousemove)
+   ============================================================ */
+function attachTilt(cards) {
+  cards.forEach((card) => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+      const rotY = ((x - cx) / cx) * 9;   // max ~9deg
+      const rotX = -((y - cy) / cy) * 9;
+      card.style.transform =
+        `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(6px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(900px) rotateX(0) rotateY(0) translateZ(0)';
+    });
+  });
+}
+
+/* Cursor hover binding for dynamically added elements */
+function attachCursorTo(nodes) {
+  const ring = document.getElementById('cursorRing');
+  const dot  = document.getElementById('cursorDot');
+  if (!ring || !dot) return;
+  nodes.forEach((el) => {
+    el.addEventListener('mouseenter', () => {
+      ring.classList.add('is-active');
+      dot.classList.add('is-hidden');
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.classList.remove('is-active');
+      dot.classList.remove('is-hidden');
+    });
+  });
+}
+
+/* ============================================================
+   4. GSAP ANIMATION LAYER
+   ============================================================ */
+function animateCardsIn(cards) {
+  if (!window.gsap) return;
+  gsap.from(cards, {
+    y: 60,
+    opacity: 0,
+    duration: 0.7,
+    ease: 'power3.out',
+    stagger: 0.12,
+    scrollTrigger: { trigger: '#projectsGrid', start: 'top 85%' }
+  });
+}
+
+function initAnimations() {
+  if (!window.gsap) return;
+
+  if (window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+
+  // ---- Hero entrance ----
+  const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+  tl.from('#heroEyebrow', { y: 24, opacity: 0, duration: 0.6 })
+    .from('.hero-title .word', {
+      yPercent: 120,
+      opacity: 0,
+      duration: 1,
+      stagger: 0.14
+    }, '-=0.3')
+    .from('#heroBio', { y: 26, opacity: 0, duration: 0.7 }, '-=0.55')
+    .from('.btn-row .btn', {
+      y: 22, opacity: 0, duration: 0.5, stagger: 0.12
+    }, '-=0.4')
+    .from('#portraitFrame', {
+      clipPath: 'inset(0 100% 0 0)', duration: 0.9, ease: 'power3.inOut'
+    }, '-=0.9');
+
+  // ---- Section reveals ----
+  gsap.utils.toArray('section:not(.hero)').forEach((sec) => {
+    gsap.from(sec.querySelectorAll('.eyebrow, .section-head h2, .stats, .hero-bio'), {
+      y: 40,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power3.out',
+      stagger: 0.1,
+      scrollTrigger: { trigger: sec, start: 'top 80%' }
+    });
+  });
+
+  // ---- Footer ----
+  gsap.from('.foot-top, .foot-bottom', {
+    y: 40,
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.15,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: 'footer.site', start: 'top 88%' }
+  });
+
+  // Stat number accent pulse on scroll
+  gsap.from('.stat', {
+    scale: 0.92,
+    opacity: 0,
+    duration: 0.6,
+    stagger: 0.08,
+    ease: 'back.out(1.6)',
+    scrollTrigger: { trigger: '.stats', start: 'top 85%' }
+  });
+}
+
+/* ============================================================
+   5. BOOT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('year').textContent = new Date().getFullYear();
+  initAnimations();
+  attachTilt(document.querySelectorAll('.tilt, .card'));
+  loadGitHub();
+});
+</script>
+</body>
+</html>
